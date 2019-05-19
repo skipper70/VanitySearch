@@ -25,6 +25,8 @@ bool Wildcard::match(const char *str, const char *pattern, bool caseSensitive) {
   const char *s;
   const char *p;
   bool star = false;
+  bool upper = false;
+  bool number = false;
 
 loopStart:
   for (s = str, p = pattern; *s; ++s, ++p) {
@@ -33,6 +35,18 @@ loopStart:
     case '?':
       if (*s == '.') goto starCheck;
       break;
+
+    case '@':
+      upper = true;
+      str = s, pattern = p;
+      ++pattern;
+      goto loopStart;
+
+    case '0':
+      number = true;
+      str = s, pattern = p;
+      ++pattern;
+      goto loopStart;
 
     case '*':
       star = true;
@@ -54,9 +68,23 @@ loopStart:
   } /* endfor */
 
   if (*p == '*') ++p;
+  if (*p == '0') ++p;
+  if (*p == '@') ++p;
   return (!*p);
 
 starCheck:
+  if (upper) {
+    if (isupper(*str) || *str == '1') {
+      str++;
+      goto loopStart;
+    }
+  }
+  if (number) {
+    if (isdigit(*str)) {
+      str++;
+      goto loopStart;
+    }
+  }
   if (!star) return false;
   str++;
   goto loopStart;

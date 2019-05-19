@@ -71,7 +71,9 @@ VanitySearch::VanitySearch(Secp256K1 *secp, vector<std::string> &inputPrefixes,s
   // Check is inputPrefixes contains wildcard character
   for (int i = 0; i < (int)inputPrefixes.size() && !hasPattern; i++) {
     hasPattern = ((inputPrefixes[i].find('*') != std::string::npos) ||
-                   (inputPrefixes[i].find('?') != std::string::npos) );
+                   (inputPrefixes[i].find('?') != std::string::npos) ||
+                   (inputPrefixes[i].find('@') != std::string::npos) ||
+                   (inputPrefixes[i].find('0') != std::string::npos));
   }
 
   if (!hasPattern) {
